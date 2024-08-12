@@ -5,6 +5,7 @@ const cors = require("cors")
 const loginModel = require("./models/admin")
 const jwt = require("jsonwebtoken")
 const peopleModel = require("./models/peoples")
+const viewModel = require("./models/view")
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -76,6 +77,26 @@ app.post("/addpeople", (req, res) => {
     })
 })
 
+
+//******************* viewAll************
+app.post("/viewAll",(req,res)=>{
+    let token=req.headers.token
+    jwt.verify(token,"rescue-app",(error,decoded)=>{
+        if (decoded && decoded.email) {
+            viewModel.find().then(
+                (items)=>{
+                    res.json(items)
+                }
+            ).catch(
+                (error)=>{
+                    res.json({"status":"error"})
+                }
+            )
+        } else {
+            res.json({"status":"Invalid Authentication"})
+        }
+    })
+})
 
 app.listen(5050, () => {
     console.log("server started")
